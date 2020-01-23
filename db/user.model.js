@@ -3,16 +3,16 @@ const crypto = require('crypto');
 const { Schema } = mongoose;
 
 const userSchema = new Schema({
-   firstName: {
+  firstName: {
     type: String,
     required: 'First name required',
     trim: true
   },
-   lastName: {
+  lastName: {
     type: String,
     required: 'Last name required',
     trim: true
-   },
+  },
   email: {
     type: String,
     required: 'E-mail required',
@@ -20,9 +20,9 @@ const userSchema = new Schema({
     trim: true,
     unique: 'E-mail exists already'
   },
-   dob: {
+  dob: {
     type: Date,
-    required: true
+    //required: true
   },
   lastSeen: {
     type: Date,
@@ -54,7 +54,7 @@ userSchema.path('passwordHash')
       this.invalidate('password', 'Password must not contain less than 6 characters');
     if (this.isNew && !this._password)
       this.invalidate('password', 'Password required');
-  })
+  });
 
 userSchema.methods = {
   makeSalt: function() {
