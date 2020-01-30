@@ -1,4 +1,5 @@
 const express = require('express');
+const createError = require('http-errors');
 
 const { User } = require('./../db');
 
@@ -10,11 +11,11 @@ router.route('/').
     console.log(data);
     const user = new User(data);
     try {
+      if (!user) throw createError(400, 'User does not exist');
       user.save();
       res.json({firstName: user.firstName, lastName: user.lastName, id: user.id, email: user.email});
     } catch (error) {
-      console.log(error);
-      res.json(error);
+      throw createError(500, error);
     }
   });
 

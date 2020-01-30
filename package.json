@@ -19,7 +19,9 @@
     "express-async-handler": "^1.1.4",
     "http-errors": "^1.7.3",
     "mongoose": "^5.8.7",
-    "morgan": "^1.9.1"
+    "morgan": "^1.9.1",
+    "passport": "^0.4.1",
+    "passport-local": "^1.0.0"
   },
   "scripts": {
     "start": "nodemon",
