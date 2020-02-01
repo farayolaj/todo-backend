@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const crypto = require('crypto');
+const passportLocalMongoose = require('passport-local-mongoose');
 const { Schema } = mongoose;
 
 const userSchema = new Schema({
@@ -32,44 +32,22 @@ const userSchema = new Schema({
     type: Date,
     default: Date.now
   },
-  passwordHash: {
-    type: String
-  },
-  salt: String
+  password: {
+    type: String,
+    required: true
+  }
 });
 
-userSchema.virtual('password')
-  .set(function(password) {
-    this._password = password;
-    this.salt = this.makeSalt();
-    this.passwordHash = this.encrypt(password);
-  })
-  .get(function() {
-    return this._password;
-  });
-
-userSchema.path('passwordHash')
-  .validate(function(p) {
-    if (this._password && this._password.length < 6)
+userSchema.path('password')
+  .validate(function(password) {
+    if (password && password.length < 6)
       this.invalidate('password', 'Password must not contain less than 6 characters');
-    if (this.isNew && !this._password)
+    if (this.isNew && !password)
       this.invalidate('password', 'Password required');
   });
 
-userSchema.methods = {
-  makeSalt: function() {
-    return Date.now().valueOf() + Math.random() + '';
-  },
-  encrypt: function(password) {
-    return crypto.createHmac('md5', this.salt)
-      .update(password)
-      .digest('hex');
-  },
-  authenticate: function(password) {
-    return this.passwordHash === this.encrypt(password);
-  }
-};
-
 const User = mongoose.model('User', userSchema);
+
+User.plugIn(passportLocalMongoose);
 
 module.exports = User;
